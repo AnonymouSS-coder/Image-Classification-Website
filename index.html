@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Classifier</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+
+
+    <style>
+        body {
+            background: url(https://images.pexels.com/photos/2387418/pexels-photo-2387418.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1) no-repeat;
+            background-size: cover;
+            height: 100vh;
+            color:white;
+          }
+          #heading {
+          background-color: lightblue;}
+                  #imgViewer{
+                      height: 200%;
+                  }
+                  #selectImg{
+                      width : 10px;
+                  }
+          .head{
+            height:200px;
+            padding: 50px;
+            text-align: center;
+            background: #ff9900;
+            color: white;
+            text-shadow: 2px 2px #ff0000;
+          }
+          .menu{
+            overflow: hidden;
+            background-color: #2e353d;
+            position: sticky;
+            position: -webkit-sticky;
+            top: 0;
+            height: 43px;
+            box-shadow: 0px 2px 20px -2px black;
+            text-align:center;
+          }
+          
+          .doneBy{
+            padding:10px;
+            color:white;
+          }
+          
+          .footer{
+            position:absolute;
+            width:100%;
+            bottom: 0;
+            height: 43px;
+            box-shadow: 0px 2px 20px -2px black;
+            background-color: #2e353d;
+            text-align:center;
+          }
+          
+          #btn:hover{
+            box-shadow: 0px 2px 20px -2px white;
+          }
+          .container{
+            margin-top: 30px;
+          }
+    </style>
+</head>
+
+<body>
+    <div class = 'head'>
+        <h1 class="title text-center">Lion, Tiger and Cheetah Image Classification</h1>
+      </div>
+      <div class='menu'>
+        <div class='doneBy'>
+          Done by - Prince Kumar Aryan
+        </div>
+      </div>
+    <main class="container">
+      <div class="columns">
+            <div class="row">
+    
+                <div class="col-12 col-sm-6" id="selectImg">
+                    <h3 style="color:white;">Upload an image for classification</h3>
+                    <form class="form" id="myForm">
+                        <label for="img" style="color:white;">Select image:</label>
+                        <input type="file" id="img" style="color:white;" class="w-100" name="img" accept="image/*" />
+                        <button type="submit" class="btn btn-success mt-5 mb-5" id='btn' >
+                            Submit
+                        </button>
+                    </form>
+                </div>
+    
+                <div class="col-12 col-sm-6">
+                    <img id="previewImg" style="color:white;" alt="Upload the Image" width="100%" height="100%" />
+                </div>
+    
+            </div>
+        <div class="col-12 col-sm-6 border" id="res">
+        <p style="color:white;">Result- <span id="result"></span></p>
+        </div>
+        </div>
+        </main>
+      <div class='footer'>
+        Have a Good Day!!
+      </div>
+</body>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+<script>
+    const img = document.getElementById("img");
+    const previewImg = document.getElementById("previewImg");
+    const myForm = document.getElementById("myForm");
+    const result = document.getElementById("result");
+
+    const getImgSrc = () => {
+        if (img.files && img.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                previewImg.setAttribute("src", e.target.result);
+            };
+
+            reader.readAsDataURL(img.files[0]);
+        }
+    };
+
+    const submit = (e) => {
+        e.preventDefault();
+        if (img.files[0]) {
+            const formData = new FormData();
+            formData.append("img", img.files[0], "image.jpg");
+
+            var requestOptions = {
+                method: "POST",
+                body: formData,
+                redirect: "follow",
+            };
+
+            fetch("http://127.0.0.1:8000/pred", requestOptions)
+                .then((response) => response.text())
+                .then((response) => {
+                    result.innerText = response;
+                    console.log(response);
+                })
+                .catch((error) => console.log("error", error));
+        } else alert("Select the file!");
+    };
+
+    img.addEventListener("change", getImgSrc);
+
+    myForm.addEventListener("submit", (e) => submit(e));
+</script>
+
+</html>
